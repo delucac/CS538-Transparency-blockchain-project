@@ -3,6 +3,8 @@
 ## About
 Project for CS538
 
+![Dollar](./readme/FU_Buck.png)
+
 ## Install instructions
 
 

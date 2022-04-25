@@ -71,6 +71,15 @@ def program():
             Return(Int(1))
         ]
     )
-
     
-    
+    #Additions
+    distribute = Seq(
+        InnerTxnBuilder.Begin(),
+        InnerTxnBuilder.SetFields({
+        	TxnField.type_enum: TxnType.AssetTransfer,
+        	TxnField.asset_receiver: Txn.Sender(),
+        	TxnField.asset_amount: Int(1),
+        	TxnField.xfer_asset(85862110)
+       }),
+       InnerTxnBuilder.Submit()
+    )
