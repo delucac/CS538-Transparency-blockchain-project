@@ -75,16 +75,33 @@ def program():
     #Additions
     
     #based on https://developer.algorand.org/docs/get-details/dapps/smart-contracts/apps/#asset-transfer
+    #used to send notes asset to user
     distribute = Seq(
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields({
         	TxnField.type_enum: TxnType.AssetTransfer,
+        	TxnField.asset_sender: ("PH4LOMJTTIZJCH7F2HCAMXVEA4B34ZQ4A5B4BERSAGT25C7XK3R4SOFTG4"),
         	TxnField.asset_receiver: Txn.Sender(),
         	TxnField.asset_amount: Int(1),
         	TxnField.xfer_asset(85862110)
        }),
        InnerTxnBuilder.Submit()
     )
+    
+    #Used to reclaim note asset
+    retrieveNote = Seq(
+        InnerTxnBuilder.Begin(),
+        InnerTxnBuilder.SetFields({
+        	TxnField.type_enum: TxnType.AssetTransfer,
+        	TxnField.asset_sender: Txn.Sender(),
+        	TxnField.asset_receiver: ("PH4LOMJTTIZJCH7F2HCAMXVEA4B34ZQ4A5B4BERSAGT25C7XK3R4SOFTG4"),
+        	TxnField.asset_amount: Int(1),
+        	TxnField.xfer_asset(85862110)
+       }),
+       InnerTxnBuilder.Submit()
+    )
+    
+    
     
     #based on https://developer.algorand.org/docs/get-details/dapps/smart-contracts/apps/#call-the-smart-contract
     #Found better if statement setup with Cond, based on PyTeal docs
@@ -93,6 +110,7 @@ def program():
     	Return(Int(1))
     )
     return_notes = Seq(
+        retrieveNote(),
         Return(Int(1))
     )
     meeting_start = Seq(
@@ -108,33 +126,3 @@ def program():
          [Bytes("Request") == Txn.application_args[0], request_notes],
          [Bytes("Return") == Txn.application_args[0], return_notes]
          )
-
-
-'''    
-    #Temp removal of old code
-    ##TODO code for running
-    requested_notes = Seq(
-    	distribute(),
-    	Return(Int(1))
-    )
-    meeting_start = Seq(
-    	Return(Int(1))
-    )
-    no_meeting = Seq(
-    	Return(Int(1))
-    )
-    
-    
-    #Code to check input parameter
-    not_requested_notes = If(
-        Bytes("Meeting") == Txn.application_args[0],
-        meeting_start,
-        no_meeting
-    )
-    #Run line below to check input requested
-    checkRequest = If(
-        Bytes("Notes") == Txn.application_args[0],
-        requested_notes,
-        not_requested_notes
-    )
-'''
