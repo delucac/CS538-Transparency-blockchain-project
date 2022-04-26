@@ -73,6 +73,8 @@ def program():
     )
     
     #Additions
+    
+    #based on https://developer.algorand.org/docs/get-details/dapps/smart-contracts/apps/#asset-transfer
     distribute = Seq(
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields({
@@ -82,4 +84,32 @@ def program():
         	TxnField.xfer_asset(85862110)
        }),
        InnerTxnBuilder.Submit()
+    )
+    
+    #based on https://developer.algorand.org/docs/get-details/dapps/smart-contracts/apps/#call-the-smart-contract
+    
+    ##TODO code for running
+    requested_notes = Seq(
+    	distribute(),
+    	Return(Int(1))
+    )
+    meeting_start = Seq(
+    	Return(Int(1))
+    )
+    no_meeting = Seq(
+    	Return(Int(1))
+    )
+    
+    
+    #Code to check input parameter
+    not_requested_notes = If(
+        Bytes("Meeting") == Txn.application_args[0],
+        meeting_start,
+        no_meeting
+    )
+    #Run line below to check input requested
+    checkRequest = If(
+        Bytes("Notes") == Txn.application_args[0],
+        requested_notes,
+        not_requested_notes
     )
