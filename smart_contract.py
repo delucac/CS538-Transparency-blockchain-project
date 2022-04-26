@@ -87,7 +87,31 @@ def program():
     )
     
     #based on https://developer.algorand.org/docs/get-details/dapps/smart-contracts/apps/#call-the-smart-contract
+    #Found better if statement setup with Cond, based on PyTeal docs
+    request_notes = Seq(
+    	distribute(),
+    	Return(Int(1))
+    )
+    return_notes = Seq(
+        Return(Int(1))
+    )
+    meeting_start = Seq(
+        Return(Int(1))
+    )
+    meeting_stop = Seq(
+        Return(Int(1))
+    )
     
+    checkRequest = Cond(
+         [Bytes("Start") == Txn.application_args[0], meeting_start],
+         [Bytes("Stop") == Txn.application_args[0], meeting_stop],
+         [Bytes("Request") == Txn.application_args[0], request_notes],
+         [Bytes("Return") == Txn.application_args[0], return_notes]
+         )
+
+
+'''    
+    #Temp removal of old code
     ##TODO code for running
     requested_notes = Seq(
     	distribute(),
@@ -113,3 +137,4 @@ def program():
         requested_notes,
         not_requested_notes
     )
+'''
