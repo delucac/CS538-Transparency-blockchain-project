@@ -86,8 +86,7 @@ def contract_returnNotes(private_key):
         
     print("Transaction information: {}".format(
         json.dumps(confirmed_txn, indent=4)))
-        
-#MUST SEND MEETING TOKEN TODO
+
 def contract_startMeeting(private_key):
     #Make transaction
     params = algod_client.suggested_params()
@@ -135,4 +134,57 @@ def contract_stopMeeting(private_key):
     print("Transaction information: {}".format(
         json.dumps(confirmed_txn, indent=4)))
 
+def contract_whiteList(private_key, private_key2):
+    #Make transaction
+    params = algod_client.suggested_params()
+    account1 = account.address_from_private_key(private_key)
+    account2 = account.address_from_private_key(private_key2)
+    accountList = []
+    accountList.append(account1)
+    accountList.append(account2)
+    txn = transaction.ApplicationNoOpTxn(accountList, params, appID, "Whitelist")
+    
+    #sign
+    signed_txn = txn.sign(private_key)
+    tx_id = signed_txn.transaction.get_txid()
+    
+    #send
+    algod_client.send_transactions([signed_txn])
+    
+    # wait for confirmation
+    try:
+        confirmed_txn = transaction.wait_for_confirmation(algod_client, tx_id, 4)
+    except Exception as err:
+        print(err)
+        return
+        
+    print("Transaction information: {}".format(
+        json.dumps(confirmed_txn, indent=4)))
 
+
+def contract_admin(private_key, private_key2):
+    #Make transaction
+    params = algod_client.suggested_params()
+    account1 = account.address_from_private_key(private_key)
+    account2 = account.address_from_private_key(private_key2)
+    accountList = []
+    accountList.append(account1)
+    accountList.append(account2)
+    txn = transaction.ApplicationNoOpTxn(accountList, params, appID, "Admin")
+    
+    #sign
+    signed_txn = txn.sign(private_key)
+    tx_id = signed_txn.transaction.get_txid()
+    
+    #send
+    algod_client.send_transactions([signed_txn])
+    
+    # wait for confirmation
+    try:
+        confirmed_txn = transaction.wait_for_confirmation(algod_client, tx_id, 4)
+    except Exception as err:
+        print(err)
+        return
+        
+    print("Transaction information: {}".format(
+        json.dumps(confirmed_txn, indent=4)))
