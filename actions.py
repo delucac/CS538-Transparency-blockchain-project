@@ -79,7 +79,7 @@ def contract_returnNotes(private_key):
     
     # wait for confirmation
     try:
-        confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 4)
+        confirmed_txn = transaction.wait_for_confirmation(algod_client, tx_id, 4)
     except Exception as err:
         print(err)
         return
@@ -127,7 +127,7 @@ def contract_stopMeeting(private_key):
     
     # wait for confirmation
     try:
-        confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 4)
+        confirmed_txn = transaction.wait_for_confirmation(algod_client, tx_id, 4)
     except Exception as err:
         print(err)
         return
