@@ -1,4 +1,4 @@
-from email.headerregistry import Address
+
 import json
 import base64
 from algosdk.v2client import algod
@@ -6,7 +6,7 @@ from algosdk import mnemonic
 from algosdk import account
 from algosdk.future.transaction import *
 from pyteal import *
-from sympy import SeqAdd
+
 
 f = open("accounts.json")
 jsonDict = json.load(f)
@@ -80,10 +80,10 @@ def program():
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields({
         	TxnField.type_enum: TxnType.AssetTransfer,
-        	TxnField.asset_sender: ("PH4LOMJTTIZJCH7F2HCAMXVEA4B34ZQ4A5B4BERSAGT25C7XK3R4SOFTG4"),
+        	TxnField.asset_sender: Global.current_application_address(),
         	TxnField.asset_receiver: Txn.Sender(),
         	TxnField.asset_amount: Int(1),
-        	TxnField.xfer_asset(85862110)
+        	TxnField.xfer_asset : jsonDict["note_id"]
        }),
        InnerTxnBuilder.Submit()
     )
@@ -94,9 +94,9 @@ def program():
         InnerTxnBuilder.SetFields({
         	TxnField.type_enum: TxnType.AssetTransfer,
         	TxnField.asset_sender: Txn.Sender(),
-        	TxnField.asset_receiver: ("PH4LOMJTTIZJCH7F2HCAMXVEA4B34ZQ4A5B4BERSAGT25C7XK3R4SOFTG4"),
+        	TxnField.asset_receiver: Global.current_application_address(),
         	TxnField.asset_amount: Int(1),
-        	TxnField.xfer_asset(85862110)
+        	TxnField.xfer_asset : 85862110
        }),
        InnerTxnBuilder.Submit()
     )
