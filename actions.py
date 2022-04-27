@@ -63,7 +63,7 @@ def contract_requestNotes(private_key):
         
 
 
-def contract_returnNotes():
+def contract_returnNotes(private_key):
     #Make transaction
     params = algod_client.suggested_params()
     sender = account.address_from_private_key(private_key)
@@ -87,7 +87,7 @@ def contract_returnNotes():
         json.dumps(confirmed_txn, indent=4)))
         
     
-def contract_startMeeting():
+def contract_startMeeting(private_key):
     #Make transaction
     params = algod_client.suggested_params()
     sender = account.address_from_private_key(private_key)
@@ -111,7 +111,7 @@ def contract_startMeeting():
         json.dumps(confirmed_txn, indent=4)))
         
     
-def contract_stopMeeting():
+def contract_stopMeeting(private_key):
     #Make transaction
     params = algod_client.suggested_params()
     sender = account.address_from_private_key(private_key)
@@ -133,4 +133,5 @@ def contract_stopMeeting():
         
     print("Transaction information: {}".format(
         json.dumps(confirmed_txn, indent=4)))
-        
+
+
