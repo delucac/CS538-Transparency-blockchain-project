@@ -96,7 +96,7 @@ def program():
         	TxnField.asset_sender: Txn.Sender(),
         	TxnField.asset_receiver: Global.current_application_address(),
         	TxnField.asset_amount: Int(1),
-        	TxnField.xfer_asset : 85862110
+        	TxnField.xfer_asset : jsonDict["note_id"]
        }),
        InnerTxnBuilder.Submit()
     )
