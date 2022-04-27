@@ -32,8 +32,9 @@ def create_application():
     global_bytes = 100
     global_schema = transaction.StateSchema(global_ints, global_bytes)
     local_schema = transaction.StateSchema(local_ints, local_bytes)
-    programCompiled = compileTeal(programMaker(),mode=Mode.Application)
-    binaryProgram = base64.b64decode(algod_client.compile(programCompiled)["result"])
+    programCompiled = compileTeal(programMaker(),mode=Mode.Application,version=6)
+    bin = algod_client.compile(programCompiled)
+    binaryProgram = base64.b64decode(bin["result"])
     sender = accounts[0]['address']
     pk = accounts[0]['key']
     txn = transaction.ApplicationCreateTxn(
@@ -46,8 +47,8 @@ def create_application():
         local_schema
     )
     signedtxn=txn.sign(pk)
-    txid = signedtxn.get_txid()
-    algod_client.send_transaction([signedtxn])
+    txid = signedtxn.transaction.get_txid()
+    algod_client.send_transactions([signedtxn])
     wait_for_confirmation(algod_client, txid)
     transaction_response = algod_client.pending_transaction_info(txid)
     app_id = transaction_response["application-index"]
@@ -68,3 +69,4 @@ def wait_for_confirmation(client, txid):
     )
     return txinfo
 
+create_application()
