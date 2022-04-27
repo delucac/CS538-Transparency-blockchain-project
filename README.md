@@ -5,9 +5,6 @@ Project for CS538
 
 ![Dollar](./readme/FU_Buck.png)
 
-## Install instructions
-
-
 ## Source based on
 https://github.com/algorand/docs/
 
