@@ -100,10 +100,10 @@ def program():
        }),
        InnerTxnBuilder.Submit()
     )
-    
+    #TODO send transaction dictating start of meeting with a token to itself
     startMeeting = Seq(
     )
-    
+    #TODO send transaction dictating end of meeting with a token to itself
     stopMeeting = Seq(
     )
     
@@ -126,9 +126,15 @@ def program():
         Return(Int(1))
     )
     
-    checkRequest = Cond(
+    handle_noop = Cond(
          [Bytes("Start") == Txn.application_args[0], meeting_start],
          [Bytes("Stop") == Txn.application_args[0], meeting_stop],
          [Bytes("Request") == Txn.application_args[0], request_notes],
-         [Bytes("Return") == Txn.application_args[0], return_notes]
+         [Bytes("Return") == Txn.application_args[0], return_notes],
+         [Bytes("Whitelist"==Txn.application_args[0]), whitelist],
+         [Bytes("Admin")==Txn.application_args[0],makeAdmin]
          )
+    program = Cond(
+        [Txn.on_completion() == OnComplete.NoOp, handle_noop],
+        [Txn.on_completion() == OnComplete.OptIn, handle_optin],
+        )

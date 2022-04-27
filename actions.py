@@ -4,7 +4,7 @@ import base64
 from algosdk import account, mnemonic, constants
 from algosdk.v2client import algod
 from algosdk.future import transaction
-from jinja2 import Undefined
+
 
 f = open("accounts.json")
 jsonDict = json.load(f)
@@ -15,7 +15,7 @@ private_key = jsonDict["accounts"][1]['address']
 algod_address = "http://localhost:4001"
 algod_token = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 algod_client = algod.AlgodClient(algod_token, algod_address)
-appID = Undefined
+appID = ""
 def contract_optIn(private_key, my_address):
     #Make transaction
     params = algod_client.suggested_params()
