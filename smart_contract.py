@@ -20,15 +20,16 @@ def program():
 
     WHITELISTED_KEY = Bytes("whitelisted")
     ADMIN_KEY = Bytes("admin") 
-
+    ONGOING = Bytes("ongoing")
     is_contract_admin = App.localGet(Int(0), ADMIN_KEY)
     is_whitelisted = App.localGet(Int(0),WHITELISTED_KEY)
-
+    is_ongoing = App.globalGet(ONGOING)
 
     handle_creation = Seq(
     App.globalPut(Bytes("Meeting #"),
     Int(0)),
     App.localPut(Int(0),ADMIN_KEY, Int(1)),
+    App.globalPut(ONGOING,Int(0)),
     Return(Int(1))
     )
     
@@ -102,26 +103,52 @@ def program():
     )
     #TODO send transaction dictating start of meeting with a token to itself
     startMeeting = Seq(
+        InnerTxnBuilder.Begin(),
+        InnerTxnBuilder.SetFields({
+        	TxnField.type_enum: TxnType.AssetTransfer,
+        	TxnField.asset_sender: Global.current_application_address(),
+        	TxnField.asset_receiver: Global.current_application_address(),
+        	TxnField.asset_amount: Int(1),
+        	TxnField.xfer_asset : jsonDict["meeting_id"],
+            TxnField.note : Concat(Bytes("Starting meeting: "),App.globalGet("Meeting #"))
+       }),
+       InnerTxnBuilder.Submit()
     )
     #TODO send transaction dictating end of meeting with a token to itself
     stopMeeting = Seq(
+        InnerTxnBuilder.Begin(),
+        InnerTxnBuilder.SetFields({
+        	TxnField.type_enum: TxnType.AssetTransfer,
+        	TxnField.asset_sender: Global.current_application_address(),
+        	TxnField.asset_receiver: Global.current_application_address(),
+        	TxnField.asset_amount: Int(1),
+        	TxnField.xfer_asset : jsonDict["meeting_id"],
+            TxnField.note: Concat(Bytes("Starting meeting: "),App.globalGet("Meeting #"))
+ 
+       }),
+       InnerTxnBuilder.Submit()
     )
     
     #based on https://developer.algorand.org/docs/get-details/dapps/smart-contracts/apps/#call-the-smart-contract
     #Found better if statement setup with Cond, based on PyTeal docs
     request_notes = Seq(
+        is_whitelisted,
+        
     	distribute(),
     	Return(Int(1))
     )
     return_notes = Seq(
+        is_whitelisted,
         retrieveNote(),
         Return(Int(1))
     )
     meeting_start = Seq(
+        is_contract_admin,
         startMeeting(),
         Return(Int(1))
     )
     meeting_stop = Seq(
+        is_contract_admin,
     	stopMeeting(),
         Return(Int(1))
     )
@@ -135,6 +162,7 @@ def program():
          [Bytes("Admin")==Txn.application_args[0],makeAdmin]
          )
     program = Cond(
+        [Txn.application_id()== Int(0), handle_creation],
         [Txn.on_completion() == OnComplete.NoOp, handle_noop],
         [Txn.on_completion() == OnComplete.OptIn, handle_optin],
         )
