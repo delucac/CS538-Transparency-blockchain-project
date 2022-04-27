@@ -26,21 +26,24 @@ params = algod_client.suggested_params()
 def create_application():
     
     #make sender
-    local_ints = 100
-    local_bytes = 100
-    global_ints = 100
-    global_bytes = 100
+    local_ints = 2
+    local_bytes = 2
+    global_ints = 2
+    global_bytes = 2
+    on_complete = transaction.OnComplete.NoOpOC.real
     global_schema = transaction.StateSchema(global_ints, global_bytes)
     local_schema = transaction.StateSchema(local_ints, local_bytes)
-    programCompiled = compileTeal(programMaker(),mode=Mode.Application,version=6)
+    programCompiled = compileTeal(programMaker(),mode=Mode.Application,version=6,assembleConstants = True)
     bin = algod_client.compile(programCompiled)
     binaryProgram = base64.b64decode(bin["result"])
     sender = accounts[0]['address']
+    print(sender)
     pk = accounts[0]['key']
+    print(pk)
     txn = transaction.ApplicationCreateTxn(
         sender,
         params,
-        binaryProgram,
+        on_complete,
         binaryProgram,
         binaryProgram,
         global_schema,

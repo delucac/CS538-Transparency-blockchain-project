@@ -22,14 +22,12 @@ def programMaker():
     ADMIN_KEY = Bytes("admin") 
     ONGOING = Bytes("ongoing")
     MEETINGCOUNTER= Bytes("Meeting #")
-    is_contract_admin = App.localGet(Int(0), ADMIN_KEY)
+    is_contract_admin = App.localGet(Int(0), ADMIN_KEY) 
     is_whitelisted = App.localGet(Int(0),WHITELISTED_KEY)
     is_ongoing = App.globalGet(ONGOING)
 
     handle_creation = Seq(
     App.globalPut(MEETINGCOUNTER, Int(0)),
-
-    App.localPut(Int(0),ADMIN_KEY, Int(1)),
     App.globalPut(ONGOING,Int(0)),
     Return(Int(1))
     )
@@ -50,10 +48,18 @@ def programMaker():
     whitelist = Seq(
         [
             Assert(
+                Or(
                 And(
                     is_contract_admin,
-                    Txn.application_args.length() == Int(2),
+                    #Txn.application_args.length() == Int(2),
                     Txn.accounts.length() == Int(1)
+                ),
+                And
+                (
+                    #Txn.application_args.length()==Int(2)
+                    Txn.accounts.length() == Int(0),
+                    Txn.sender()==Bytes(jsonDict["accounts"][0]["address"])
+                )
                 )
             ),
             App.localPut(Int(1), WHITELISTED_KEY, Int(1)),
@@ -65,7 +71,7 @@ def programMaker():
              Assert(
                 And(
                     is_contract_admin,
-                    Txn.application_args.length() == Int(2),
+                    #Txn.application_args.length() == Int(2),
                     Txn.accounts.length() == Int(1)
                 )
             ),
@@ -178,5 +184,5 @@ def programMaker():
         )
     return program
 with open('MeetingContract.teal','w') as f:
-    compiled = compileTeal(programMaker(),Mode.Application,version=5)
+    compiled = compileTeal(programMaker(),Mode.Application,version=6)
     f.write(compiled)

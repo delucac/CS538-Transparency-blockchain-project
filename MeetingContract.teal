@@ -1,4 +1,4 @@
-#pragma version 5
+#pragma version 6
 txn ApplicationID
 int 0
 ==
@@ -49,10 +49,6 @@ main_l12:
 int 0
 byte "admin"
 app_local_get
-txn NumAppArgs
-int 2
-==
-&&
 txn NumAccounts
 int 1
 ==
@@ -68,14 +64,18 @@ main_l13:
 int 0
 byte "admin"
 app_local_get
-txn NumAppArgs
-int 2
-==
-&&
 txn NumAccounts
 int 1
 ==
 &&
+txn NumAccounts
+int 0
+==
+txn Sender
+byte "PH4LOMJTTIZJCH7F2HCAMXVEA4B34ZQ4A5B4BERSAGT25C7XK3R4SOFTG4"
+==
+&&
+||
 assert
 int 1
 byte "whitelisted"
@@ -192,10 +192,6 @@ main_l18:
 byte "Meeting #"
 int 0
 app_global_put
-int 0
-byte "admin"
-int 1
-app_local_put
 byte "ongoing"
 int 0
 app_global_put

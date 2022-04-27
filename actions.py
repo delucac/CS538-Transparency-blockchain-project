@@ -9,13 +9,13 @@ from algosdk.future import transaction
 f = open("accounts.json")
 jsonDict = json.load(f)
 
-private_key = jsonDict["accounts"][1]['address']
+private_key = jsonDict["accounts"][1]['key']
 
 #connection parameters
 algod_address = "http://localhost:4001"
 algod_token = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 algod_client = algod.AlgodClient(algod_token, algod_address)
-appID = ""
+appID = jsonDict["app_id"]
 def contract_optIn(private_key, my_address):
     #Make transaction
     params = algod_client.suggested_params()
