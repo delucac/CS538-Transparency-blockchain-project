@@ -1,0 +1,203 @@
+#pragma version 5
+txn ApplicationID
+int 0
+==
+bnz main_l18
+txn OnCompletion
+int NoOp
+==
+bnz main_l5
+txn OnCompletion
+int OptIn
+==
+bnz main_l4
+err
+main_l4:
+int 0
+byte "whitelisted"
+int 0
+app_local_put
+int 1
+return
+main_l5:
+byte "Start"
+txna ApplicationArgs 0
+==
+bnz main_l17
+byte "Stop"
+txna ApplicationArgs 0
+==
+bnz main_l16
+byte "Request"
+txna ApplicationArgs 0
+==
+bnz main_l15
+byte "Return"
+txna ApplicationArgs 0
+==
+bnz main_l14
+byte "Whitelist"
+txna ApplicationArgs 0
+==
+bnz main_l13
+byte "Admin"
+txna ApplicationArgs 0
+==
+bnz main_l12
+err
+main_l12:
+int 0
+byte "admin"
+app_local_get
+txn NumAppArgs
+int 2
+==
+&&
+txn NumAccounts
+int 1
+==
+&&
+assert
+int 1
+byte "admin"
+int 1
+app_local_put
+int 1
+return
+main_l13:
+int 0
+byte "admin"
+app_local_get
+txn NumAppArgs
+int 2
+==
+&&
+txn NumAccounts
+int 1
+==
+&&
+assert
+int 1
+byte "whitelisted"
+int 1
+app_local_put
+int 1
+return
+main_l14:
+int 0
+byte "whitelisted"
+app_local_get
+assert
+itxn_begin
+int axfer
+itxn_field TypeEnum
+txn Sender
+itxn_field AssetSender
+global CurrentApplicationAddress
+itxn_field AssetReceiver
+int 1
+itxn_field AssetAmount
+int 85862110
+itxn_field XferAsset
+itxn_submit
+int 1
+return
+main_l15:
+int 0
+byte "whitelisted"
+app_local_get
+byte "ongoing"
+app_global_get
+&&
+assert
+itxn_begin
+int axfer
+itxn_field TypeEnum
+global CurrentApplicationAddress
+itxn_field AssetSender
+txn Sender
+itxn_field AssetReceiver
+int 1
+itxn_field AssetAmount
+int 85862110
+itxn_field XferAsset
+itxn_submit
+int 1
+return
+main_l16:
+int 0
+byte "admin"
+app_local_get
+assert
+itxn_begin
+int axfer
+itxn_field TypeEnum
+global CurrentApplicationAddress
+itxn_field AssetSender
+global CurrentApplicationAddress
+itxn_field AssetReceiver
+int 1
+itxn_field AssetAmount
+int 85807623
+itxn_field XferAsset
+byte "Ending meeting: "
+byte "Meeting #"
+app_global_get
+concat
+itxn_field Note
+itxn_submit
+byte "Meeting #"
+app_global_get
+store 0
+byte "Meeting #"
+load 0
+int 1
++
+app_global_put
+int 1
+return
+byte "Ongoing"
+int 0
+app_global_put
+int 1
+return
+main_l17:
+int 0
+byte "admin"
+app_local_get
+assert
+itxn_begin
+int axfer
+itxn_field TypeEnum
+global CurrentApplicationAddress
+itxn_field AssetSender
+global CurrentApplicationAddress
+itxn_field AssetReceiver
+int 1
+itxn_field AssetAmount
+int 85807623
+itxn_field XferAsset
+byte "Starting meeting: "
+byte "Meeting #"
+app_global_get
+concat
+itxn_field Note
+itxn_submit
+byte "Ongoing"
+int 1
+app_global_put
+int 1
+return
+main_l18:
+byte "Meeting #"
+int 0
+app_global_put
+int 0
+byte "admin"
+int 1
+app_local_put
+byte "ongoing"
+int 0
+app_global_put
+int 1
+return
