@@ -16,7 +16,7 @@ algod_token = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 algod_client = algod.AlgodClient(algod_token, algod_address)
 
 params = algod_client.suggested_params()
-def program():
+def programMaker():
 
     WHITELISTED_KEY = Bytes("whitelisted")
     ADMIN_KEY = Bytes("admin") 
@@ -82,7 +82,7 @@ def program():
         InnerTxnBuilder.SetFields({
         	TxnField.type_enum: TxnType.AssetTransfer,
         	TxnField.asset_sender: Global.current_application_address(),
-        	TxnField.asset_receiver: Txn.Sender(),
+        	TxnField.asset_receiver: Txn.sender(),
         	TxnField.asset_amount: Int(1),
         	TxnField.xfer_asset : jsonDict["note_id"]
        }),
@@ -94,7 +94,7 @@ def program():
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields({
         	TxnField.type_enum: TxnType.AssetTransfer,
-        	TxnField.asset_sender: Txn.Sender(),
+        	TxnField.asset_sender: Txn.sender(),
         	TxnField.asset_receiver: Global.current_application_address(),
         	TxnField.asset_amount: Int(1),
         	TxnField.xfer_asset : jsonDict["note_id"]
@@ -110,7 +110,8 @@ def program():
         	TxnField.asset_receiver: Global.current_application_address(),
         	TxnField.asset_amount: Int(1),
         	TxnField.xfer_asset : jsonDict["meeting_id"],
-            TxnField.note : Concat(Bytes("Starting meeting: "),App.globalGet("Meeting #"))
+            TxnField.note : Concat(Bytes("Starting meeting: "),
+            App.globalGet("Meeting #"))
        }),
        InnerTxnBuilder.Submit(),
        App.globalPut("Ongoing",Int(1))
@@ -168,3 +169,7 @@ def program():
         [Txn.on_completion() == OnComplete.NoOp, handle_noop],
         [Txn.on_completion() == OnComplete.OptIn, handle_optin],
         )
+    return program
+with open('MeetingContract.teal','w') as f:
+    compiled = compileTeal(programMaker(),Mode.Application,version=5)
+    f.write(compiled)
