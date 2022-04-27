@@ -134,11 +134,15 @@ def contract_stopMeeting(private_key):
     print("Transaction information: {}".format(
         json.dumps(confirmed_txn, indent=4)))
 
-def contract_whiteList(private_key):
+def contract_whiteList(private_key, private_key2):
     #Make transaction
     params = algod_client.suggested_params()
-    sender = account.address_from_private_key(private_key)
-    txn = transaction.ApplicationNoOpTxn(sender, params, appID, "Whitelist")
+    account1 = account.address_from_private_key(private_key)
+    account2 = account.address_from_private_key(private_key2)
+    accountList = []
+    accountList.append(account1)
+    accountList.append(account2)
+    txn = transaction.ApplicationNoOpTxn(accountList, params, appID, "Whitelist")
     
     #sign
     signed_txn = txn.sign(private_key)
@@ -157,11 +161,16 @@ def contract_whiteList(private_key):
     print("Transaction information: {}".format(
         json.dumps(confirmed_txn, indent=4)))
 
-def contract_admin(private_key):
+
+def contract_admin(private_key, private_key2):
     #Make transaction
     params = algod_client.suggested_params()
-    sender = account.address_from_private_key(private_key)
-    txn = transaction.ApplicationNoOpTxn(sender, params, appID, "Admin")
+    account1 = account.address_from_private_key(private_key)
+    account2 = account.address_from_private_key(private_key2)
+    accountList = []
+    accountList.append(account1)
+    accountList.append(account2)
+    txn = transaction.ApplicationNoOpTxn(accountList, params, appID, "Admin")
     
     #sign
     signed_txn = txn.sign(private_key)
