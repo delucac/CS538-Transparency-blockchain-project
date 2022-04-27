@@ -32,14 +32,16 @@ def create_application():
     global_bytes = 100
     global_schema = transaction.StateSchema(global_ints, global_bytes)
     local_schema = transaction.StateSchema(local_ints, local_bytes)
+    programCompiled = compileTeal(programMaker(),mode=Mode.Application)
+    binaryProgram = base64.b64decode(algod_client.compile(programCompiled)["result"])
     sender = accounts[0]['address']
     pk = accounts[0]['key']
     txn = transaction.ApplicationCreateTxn(
         sender,
         params,
-        programMaker(),
-        programMaker(),
-        programMaker(),
+        binaryProgram,
+        binaryProgram,
+        binaryProgram,
         global_schema,
         local_schema
     )
