@@ -124,17 +124,18 @@ def program():
         	TxnField.asset_receiver: Global.current_application_address(),
         	TxnField.asset_amount: Int(1),
         	TxnField.xfer_asset : jsonDict["meeting_id"],
-            TxnField.note: Concat(Bytes("Starting meeting: "),App.globalGet("Meeting #")),
+            TxnField.note: Concat(Bytes("Ending meeting: "),App.globalGet("Meeting #")),
        }),
        InnerTxnBuilder.Submit(),
-    App.globalPut("Ongoing",Int(0))
+       counter,
+       App.globalPut("Ongoing",Int(0))
     )
     
     #based on https://developer.algorand.org/docs/get-details/dapps/smart-contracts/apps/#call-the-smart-contract
     #Found better if statement setup with Cond, based on PyTeal docs
     request_notes = Seq(
         is_whitelisted,
-        
+        is_ongoing,
     	distribute(),
     	Return(Int(1))
     )
