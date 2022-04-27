@@ -112,7 +112,8 @@ def program():
         	TxnField.xfer_asset : jsonDict["meeting_id"],
             TxnField.note : Concat(Bytes("Starting meeting: "),App.globalGet("Meeting #"))
        }),
-       InnerTxnBuilder.Submit()
+       InnerTxnBuilder.Submit(),
+       App.globalPut("Ongoing",Int(1))
     )
     #TODO send transaction dictating end of meeting with a token to itself
     stopMeeting = Seq(
@@ -123,10 +124,10 @@ def program():
         	TxnField.asset_receiver: Global.current_application_address(),
         	TxnField.asset_amount: Int(1),
         	TxnField.xfer_asset : jsonDict["meeting_id"],
-            TxnField.note: Concat(Bytes("Starting meeting: "),App.globalGet("Meeting #"))
- 
+            TxnField.note: Concat(Bytes("Starting meeting: "),App.globalGet("Meeting #")),
        }),
-       InnerTxnBuilder.Submit()
+       InnerTxnBuilder.Submit(),
+    App.globalPut("Ongoing",Int(0))
     )
     
     #based on https://developer.algorand.org/docs/get-details/dapps/smart-contracts/apps/#call-the-smart-contract
