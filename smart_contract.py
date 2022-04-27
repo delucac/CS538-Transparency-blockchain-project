@@ -101,7 +101,11 @@ def program():
        InnerTxnBuilder.Submit()
     )
     
+    startMeeting = Seq(
+    )
     
+    stopMeeting = Seq(
+    )
     
     #based on https://developer.algorand.org/docs/get-details/dapps/smart-contracts/apps/#call-the-smart-contract
     #Found better if statement setup with Cond, based on PyTeal docs
@@ -114,9 +118,11 @@ def program():
         Return(Int(1))
     )
     meeting_start = Seq(
+        startMeeting(),
         Return(Int(1))
     )
     meeting_stop = Seq(
+    	stopMeeting(),
         Return(Int(1))
     )
     
