@@ -3,7 +3,7 @@
 ## About
 Project for CS538
 
-![Dollar](./readme/FU_Buck.png)
+![Dollar](./readme/Chen_Buck.png)
 
 ## Source based on
 https://github.com/algorand/docs/
